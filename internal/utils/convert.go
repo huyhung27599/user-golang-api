@@ -15,3 +15,8 @@ func CamelToSnake(str string) string {
 	snake = matchAllCap.ReplaceAllString(str, "${1}_${2}")
 	return strings.ToLower(snake)
 }
+
+
+func NormalizeString(str string) string {
+	return strings.ToLower(strings.TrimSpace(str))
+}

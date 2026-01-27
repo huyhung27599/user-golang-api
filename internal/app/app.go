@@ -24,7 +24,9 @@ func NewApplication(config *config.Config) *Application {
 	loadEnv()
 	router := gin.Default()
 
-	validation.InitValidator()
+	if err := validation.InitValidator(); err != nil {
+		log.Fatalf("Error initializing validator: %v", err)
+	}
 
 	modules := []Module{
 		NewUserModule(),

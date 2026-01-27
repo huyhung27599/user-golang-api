@@ -81,6 +81,10 @@ func HandleValidationErrors(err error) gin.H {
 			case "file_ext":
 				allowedValues := strings.Join(strings.Split(e.Param(), " "), ",")
 				errors[fieldPath] = fmt.Sprintf("%s chỉ cho phép những file có extension: %s", fieldPath, allowedValues)
+			case "email_address":
+				errors[fieldPath] = fmt.Sprintf("%s phải là domain hợp lệ", fieldPath)
+			case "password_strong":
+				errors[fieldPath] = fmt.Sprintf("%s phải là mật khẩu mạnh", fieldPath)
 			}
 		}
 
@@ -88,5 +92,5 @@ func HandleValidationErrors(err error) gin.H {
 
 	}
 
-	return gin.H{"error": "Yêu cầu không hợp lệ" + err.Error()}
+	return gin.H{"error": "Yêu cầu không hợp lệ" , "message": err.Error()}
 }

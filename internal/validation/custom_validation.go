@@ -5,11 +5,51 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"user-management-api/internal/utils"
 
 	"github.com/go-playground/validator/v10"
 )
 
 func RegisterCustomValidation(v *validator.Validate) error {
+	var blockedDomains = map[string]bool{
+		"gmail.com": true,
+		"yahoo.com": true,
+		"hotmail.com": true,
+		"outlook.com": true,
+		"icloud.com": true,
+		"live.com": true,
+		"msn.com": true,
+	}
+
+	v.RegisterValidation("email_address", func(fl validator.FieldLevel) bool {
+		email := fl.Field().String()
+		domain := strings.Split(email, "@")[1]
+		return !blockedDomains[utils.NormalizeString(domain)]
+	})
+
+	v.RegisterValidation("password_strong", func(fl validator.FieldLevel) bool {
+		password := fl.Field().String()
+
+		if len(password) < 8 {
+			return false
+		}
+
+		
+		if !regexp.MustCompile(`[A-Z]`).MatchString(password) {
+			return false
+		}
+
+		if !regexp.MustCompile(`[a-z]`).MatchString(password) {
+			return false
+		}
+		
+		if !regexp.MustCompile(`[0-9]`).MatchString(password) {
+			return false
+		}
+
+		return true
+	})
+
 	var slugRegex = regexp.MustCompile(`^[a-z0-9]+(?:[-.][a-z0-9]+)*$`)
 	v.RegisterValidation("slug", func(fl validator.FieldLevel) bool {
 		return slugRegex.MatchString(fl.Field().String())
