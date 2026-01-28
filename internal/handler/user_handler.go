@@ -19,6 +19,10 @@ func NewUserHandler(service service.UserService) *UserHandler {
 	return &UserHandler{service: service}
 }
 
+type GetUserByUUIDParam struct {
+	UUID string `uri:"uuid" binding:"required,uuid"`
+}
+
 func (uh *UserHandler) GetAllUser(c *gin.Context) {
 	users, err := uh.service.GetAllUser()
 	if err != nil {
@@ -49,9 +53,15 @@ func (uh *UserHandler) CreateUser(c *gin.Context) {
 }
 
 func (uh *UserHandler) GetUserByUUID(c *gin.Context) {
+	var param GetUserByUUIDParam
+	if err := c.ShouldBindUri(&param); err != nil {
+		c.JSON(http.StatusBadRequest, validation.HandleValidationErrors(err))
+		return
+	}
 
+	user, err := uh.service.GetUserByUUID(param.UUID)
+	
 }
-
 func (uh *UserHandler) UpdateUser(c *gin.Context) {}
 
 func (uh *UserHandler) DeleteUser(c *gin.Context) {}
