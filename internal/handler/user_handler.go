@@ -37,8 +37,8 @@ func (uh *UserHandler) GetAllUser(c *gin.Context) {
 func (uh *UserHandler) CreateUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, validation.HandleValidationErrors(err))
-		utils.ResponseError(c, err)
+		utils.ResponseValidator(c, validation.HandleValidationErrors(err))
+		
 		return
 	}
 
@@ -55,12 +55,18 @@ func (uh *UserHandler) CreateUser(c *gin.Context) {
 func (uh *UserHandler) GetUserByUUID(c *gin.Context) {
 	var param GetUserByUUIDParam
 	if err := c.ShouldBindUri(&param); err != nil {
-		c.JSON(http.StatusBadRequest, validation.HandleValidationErrors(err))
+		utils.ResponseValidator(c, validation.HandleValidationErrors(err))
 		return
 	}
 
 	user, err := uh.service.GetUserByUUID(param.UUID)
-	
+	if err != nil {
+		utils.ResponseError(c, err)
+		return
+	}
+
+	userDTO := dto.MapUserToDTO(user)
+	utils.ResponseSuccess(c, http.StatusOK, &userDTO)
 }
 func (uh *UserHandler) UpdateUser(c *gin.Context) {}
 

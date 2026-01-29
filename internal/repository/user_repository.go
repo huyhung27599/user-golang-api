@@ -20,7 +20,14 @@ func (ur *InMemoryUserRepository) FindAllUser() ([]models.User, error) {
 }
 
 
-func (ur *InMemoryUserRepository) FindUserByUUID(uuid string) (models.User, error) {}
+func (ur *InMemoryUserRepository) FindUserByUUID(uuid string) (models.User,bool) {
+	for _, user := range ur.users {
+		if user.UUID == uuid {
+			return user, true
+		}
+	}
+	return models.User{}, false
+}	
 
 func (ur *InMemoryUserRepository) CreateUser(user models.User) (models.User, error) {
 	ur.users = append(ur.users, user)

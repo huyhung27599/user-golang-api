@@ -56,6 +56,11 @@ func ResponseError(c *gin.Context, err error) {
 	}
 }
 
+func ResponseValidator(c *gin.Context, data any) {
+
+	c.JSON(http.StatusBadRequest, data)
+}
+
 
 func ResponseSuccess(c *gin.Context,status int, data any) {
 	response := gin.H{
