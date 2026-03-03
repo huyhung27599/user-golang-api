@@ -6,7 +6,7 @@ type UserRepository interface {
 	FindAllUser() ([]models.User, error)
 	FindUserByUUID(uuid string) (models.User,bool)
 	CreateUser(user models.User) (models.User, error)
-	UpdateUser(user models.User) (models.User, error)
+	UpdateUser(uuid string, user models.User) error
 	DeleteUser(uuid string) error
 	FindByEmail(email string) (models.User,bool)
 }

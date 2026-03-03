@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"slices"
 	"user-management-api/internal/models"
+	"user-management-api/internal/utils"
 )
 
 
@@ -34,9 +36,25 @@ func (ur *InMemoryUserRepository) CreateUser(user models.User) (models.User, err
 	return user, nil
 }
 
-func (ur *InMemoryUserRepository) UpdateUser(user models.User) (models.User, error) {}
+func (ur *InMemoryUserRepository) UpdateUser(uuid string, user models.User)  error {
+	for i, u := range ur.users {
+		if u.UUID == uuid {
+			ur.users[i] = user
+			return nil
+		}
+	}
+	return utils.WrapError("user not found", utils.ErrCodeNotFound, nil)
+}
 
-func (ur *InMemoryUserRepository) DeleteUser(uuid string) error {}
+func (ur *InMemoryUserRepository) DeleteUser(uuid string) error {
+	for i, u := range ur.users {
+		if u.UUID == uuid {
+			ur.users = slices.Delete(ur.users, i, 1)
+			return nil
+		}
+	}
+	return utils.WrapError("user not found", utils.ErrCodeNotFound, nil)
+}
 
 func (ur *InMemoryUserRepository) FindByEmail(email string) (models.User,bool) {
 	for _, user := range ur.users {
